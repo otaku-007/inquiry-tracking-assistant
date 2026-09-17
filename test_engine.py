@@ -64,10 +64,10 @@ def test_cross_day_due():
     check("2d 无期限=未知", se.compute_overdue(None, "2026-09-14") == "未知")
     tasks = build_tasks()
     se.refresh_overdue(tasks, "2026-09-13")
-    jens = next(t for t in tasks if t["lead_id"] == "13904438223")
+    jens = next(t for t in tasks if t["lead_id"] == "13900000101")
     check("2e Jens 在 09-13 今日到期", jens["overdue_status"] == "今日到期", jens["overdue_status"])
     se.refresh_overdue(tasks, "2026-09-14")
-    jens = next(t for t in tasks if t["lead_id"] == "13904438223")
+    jens = next(t for t in tasks if t["lead_id"] == "13900000101")
     check("2f Jens 在 09-14 已逾期", jens["overdue_status"] == "已逾期", jens["overdue_status"])
 
 
@@ -149,7 +149,7 @@ def test_manual_defer_preserved():
 
 def test_deferred_reenters():
     tasks = build_tasks()
-    jens = next(t for t in tasks if t["lead_id"] == "13904438223")
+    jens = next(t for t in tasks if t["lead_id"] == "13900000101")
     jens["status"] = "deferred"
     jens["due_at"] = "2026-10-01"
     jens["next_check_at"] = "2026-10-01"

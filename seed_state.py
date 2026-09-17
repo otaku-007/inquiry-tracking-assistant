@@ -10,26 +10,26 @@ import state_engine as se
 
 LEADS = [
     # (inquiry_id, buyer, owner, category, source, country, create_time, update_time, high_intent, conversation_key)
-    ("13904438223", "Jens Damen", "Ella Chen", "TM 商机", "Inquiry from TM", "Belgium", "2026-09-06", "2026-09-11 17:44", False, "jens"),
-    ("13877690622", "Lina Albrichtaite", "Ella Chen", "TM 商机", "Inquiry from TM", "Lithuania", "2026-08-01", "2026-09-11 17:40", True, "lina"),
-    ("13919358534", "Sultana ALDAWS", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-11", "2026-09-11 16:30", False, "sultana"),
-    ("13919728151", "josh bosh", "Ella Chen", "TM 商机", "Inquiry from TM", "Poland", "2026-09-09", "2026-09-11 14:28", False, "josh"),
-    ("13877372914", "Jonathan Clabeaux", "Alice Lam", "TM 商机", "Inquiry from TM", "United States", "2026-07-23", "2026-09-11 14:01", True, "jonathan"),
-    ("13842024171", "NSABIMANA Christophe", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-04-11", "2026-09-11 13:31", True, "nsabimana"),
-    ("13831813262", "NSABIMANA Christophe", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-06-12", "2026-09-11 13:31", True, "nsabimana"),
-    ("13916574677", "NSABIMANA Christophe", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-09-07", "2026-09-11 13:31", True, "nsabimana"),
-    ("13897259009", "Hashim Abdullah", "Bin Cai", "TM 商机", "Inquiry from TM", "Australia", "2026-08-18", "2026-09-11 13:01", True, "hashim"),
-    ("13835503548", "Hashim Abdullah", "Bin Cai", "TM 商机", "Inquiry from TM", "Australia", "2026-05-29", "2026-09-11 13:01", True, "hashim"),
-    ("20507764680", "Paola Gutiérrez", "Ella Chen", "询盘商机", "Inquiry from Product Details Page", "Colombia", "2026-09-06", "2026-09-11 09:27", True, "paola"),
-    ("13909977624", "YANIS KENZY", "Bin Cai", "TM 商机", "Inquiry from TM", "France", "2026-09-11", "2026-09-11 07:42", False, "yanis"),
-    ("13909509782", "LIGHTCRAFTINDIA PVT LIMITED", "Ella Chen", "TM 商机", "Inquiry from TM", "India", "2026-09-10", "2026-09-10", False, "lightcraft"),
-    ("13914574002", "Rowaida Alzainy", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-10", "2026-09-10", False, "rowaida"),
-    ("13909052063", "Aparna Baskar", "Ella Chen", "TM 商机", "Inquiry from TM", "", "2026-09-02", "2026-09-10", False, "aparna"),
-    ("13949412294", "rozi radevski", "Ella Chen", "TM 商机", "Inquiry from TM", "Australia", "2026-09-05", "2026-09-10", True, "rozi"),
-    ("13911223230", "gg ff", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-10", "2026-09-10", False, "ggff"),
-    ("100000038545328", "John Hutchinson", "Ella Chen", "询盘商机", "Inquiry from Product Details Page", "United Kingdom", "2026-09-07", "2026-09-09", False, "john"),
-    ("13918744156", "Ansab K", "Ella Chen", "TM 商机", "Inquiry from TM", "United Arab Emirates", "2026-09-08", "2026-09-09", False, "ansab"),
-    ("13894007685", "Dilek Samli", "Ella Chen", "TM 商机", "Inquiry from TM", "United Kingdom", "2026-08-13", "2026-09-09", True, "dilek"),
+    ("13900000101", "Buyer Alpha", "Ella Chen", "TM 商机", "Inquiry from TM", "Belgium", "2026-09-06", "2026-09-11 17:44", False, "jens"),
+    ("13900000102", "Buyer Beta", "Ella Chen", "TM 商机", "Inquiry from TM", "Lithuania", "2026-08-01", "2026-09-11 17:40", True, "lina"),
+    ("13900000103", "Buyer Gamma", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-11", "2026-09-11 16:30", False, "sultana"),
+    ("13900000104", "Buyer Delta", "Ella Chen", "TM 商机", "Inquiry from TM", "Poland", "2026-09-09", "2026-09-11 14:28", False, "josh"),
+    ("13900000105", "Buyer Epsilon", "Alice Lam", "TM 商机", "Inquiry from TM", "United States", "2026-07-23", "2026-09-11 14:01", True, "jonathan"),
+    ("13900000106", "Buyer Zeta", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-04-11", "2026-09-11 13:31", True, "nsabimana"),
+    ("13900000107", "Buyer Zeta", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-06-12", "2026-09-11 13:31", True, "nsabimana"),
+    ("13900000108", "Buyer Zeta", "Alice Lam", "TM 商机", "Inquiry from TM", "Rwanda", "2026-09-07", "2026-09-11 13:31", True, "nsabimana"),
+    ("13900000109", "Buyer Eta", "Bin Cai", "TM 商机", "Inquiry from TM", "Australia", "2026-08-18", "2026-09-11 13:01", True, "hashim"),
+    ("13900000110", "Buyer Eta", "Bin Cai", "TM 商机", "Inquiry from TM", "Australia", "2026-05-29", "2026-09-11 13:01", True, "hashim"),
+    ("13900000133", "Buyer Upsilon", "Ella Chen", "询盘商机", "Inquiry from Product Details Page", "Colombia", "2026-09-06", "2026-09-11 09:27", True, "paola"),
+    ("13900000111", "Buyer Theta", "Bin Cai", "TM 商机", "Inquiry from TM", "France", "2026-09-11", "2026-09-11 07:42", False, "yanis"),
+    ("13900000112", "Buyer Iota", "Ella Chen", "TM 商机", "Inquiry from TM", "India", "2026-09-10", "2026-09-10", False, "lightcraft"),
+    ("13900000113", "Buyer Kappa", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-10", "2026-09-10", False, "rowaida"),
+    ("13900000114", "Buyer Lambda", "Ella Chen", "TM 商机", "Inquiry from TM", "", "2026-09-02", "2026-09-10", False, "aparna"),
+    ("13900000115", "Buyer Mu", "Ella Chen", "TM 商机", "Inquiry from TM", "Australia", "2026-09-05", "2026-09-10", True, "rozi"),
+    ("13900000116", "Buyer Nu", "Ella Chen", "TM 商机", "Inquiry from TM", "Saudi Arabia", "2026-09-10", "2026-09-10", False, "ggff"),
+    ("13900000134", "Buyer Phi", "Ella Chen", "询盘商机", "Inquiry from Product Details Page", "United Kingdom", "2026-09-07", "2026-09-09", False, "john"),
+    ("13900000117", "Buyer Xi", "Ella Chen", "TM 商机", "Inquiry from TM", "United Arab Emirates", "2026-09-08", "2026-09-09", False, "ansab"),
+    ("13900000118", "Buyer Omicron", "Ella Chen", "TM 商机", "Inquiry from TM", "United Kingdom", "2026-08-13", "2026-09-09", True, "dilek"),
 ]
 
 def build_opportunities():
@@ -51,9 +51,9 @@ def build_opportunities():
     # 标注疑似重复（同一会话，未确认是否同一采购项目）
     for o in opps:
         if o["conversation_key"] == "nsabimana":
-            o["dedup_note"] = "疑似与 13842024171 同一会话（未确认是否同一采购项目）"
+            o["dedup_note"] = "疑似与 13900000106 同一会话（未确认是否同一采购项目）"
         if o["conversation_key"] == "hashim":
-            o["dedup_note"] = "疑似与 13897259009 同一会话（未确认是否同一采购项目）"
+            o["dedup_note"] = "疑似与 13900000109 同一会话（未确认是否同一采购项目）"
     return opps
 
 
@@ -68,8 +68,8 @@ def build_tasks():
 
     # 1) Jens —— 承诺待兑现，未到期（两天内答复，due 09-13）
     t.append({
-        "task_id": se.make_task_id("13904438223", "承诺待兑现"),
-        "lead_id": "13904438223", "buyer": "Jens Damen", "owner": "Ella Chen",
+        "task_id": se.make_task_id("13900000101", "承诺待兑现"),
+        "lead_id": "13900000101", "buyer": "Buyer Alpha", "owner": "Ella Chen",
         "action_type": "承诺待兑现",
         "evidence": [
             ev("buyer", "09-11 17:43", "for DDP sea the price should be much lower to be profitable",
@@ -89,8 +89,8 @@ def build_tasks():
 
     # 2) Paola —— 承诺待兑现，无客户期限（不编造）
     t.append({
-        "task_id": se.make_task_id("20507764680", "承诺待兑现"),
-        "lead_id": "20507764680", "buyer": "Paola Gutiérrez", "owner": "Ella Chen",
+        "task_id": se.make_task_id("13900000133", "承诺待兑现"),
+        "lead_id": "13900000133", "buyer": "Buyer Upsilon", "owner": "Ella Chen",
         "action_type": "承诺待兑现",
         "evidence": [
             ev("buyer", "09-10 22:59", "Hola, me podrias cotizar lampara de muestra a esta dirección 广州市白云区…",
@@ -109,8 +109,8 @@ def build_tasks():
 
     # 3) YANIS —— 前置条件未满足（缺地址，不催报价）
     t.append({
-        "task_id": se.make_task_id("13909977624", "前置条件未满足"),
-        "lead_id": "13909977624", "buyer": "YANIS KENZY", "owner": "Bin Cai",
+        "task_id": se.make_task_id("13900000111", "前置条件未满足"),
+        "lead_id": "13900000111", "buyer": "Buyer Theta", "owner": "Bin Cai",
         "action_type": "前置条件未满足",
         "evidence": [
             ev("bot", "09-11 05:44", "Impossible de garantir l'exonération douanière…",
@@ -133,8 +133,8 @@ def build_tasks():
 
     # 4) Lina —— 唛头确认（未闭环）
     t.append({
-        "task_id": se.make_task_id("13877690622", "订单收尾待办"),
-        "lead_id": "13877690622", "buyer": "Lina Albrichtaite", "owner": "Ella Chen",
+        "task_id": se.make_task_id("13900000102", "订单收尾待办"),
+        "lead_id": "13900000102", "buyer": "Buyer Beta", "owner": "Ella Chen",
         "action_type": "订单收尾待办",
         "evidence": [
             ev("seller", "09-11 17:05", "The goods have been taken for wooden crating.",
@@ -155,8 +155,8 @@ def build_tasks():
 
     # 5) josh —— 认证异议核验（发文件≠解决）
     t.append({
-        "task_id": se.make_task_id("13919728151", "高意向待推进"),
-        "lead_id": "13919728151", "buyer": "josh bosh", "owner": "Ella Chen",
+        "task_id": se.make_task_id("13900000104", "高意向待推进"),
+        "lead_id": "13900000104", "buyer": "Buyer Delta", "owner": "Ella Chen",
         "action_type": "高意向待推进",
         "evidence": [
             ev("buyer", "09-11 02:53", "质疑 listing 上 CE Certified / DOC 标识与实际不符",
@@ -176,8 +176,8 @@ def build_tasks():
 
     # 6) Jonathan —— 规格确认（完成标准=规格确认，非下单）
     t.append({
-        "task_id": se.make_task_id("13877372914", "高意向待推进"),
-        "lead_id": "13877372914", "buyer": "Jonathan Clabeaux", "owner": "Alice Lam",
+        "task_id": se.make_task_id("13900000105", "高意向待推进"),
+        "lead_id": "13900000105", "buyer": "Buyer Epsilon", "owner": "Alice Lam",
         "action_type": "高意向待推进",
         "evidence": [
             ev("buyer", "09-11 13:44", "I will go with what you suggest... 3 small plates then",
@@ -195,10 +195,10 @@ def build_tasks():
         "status": "open",
     })
 
-    # 7) Sultana —— 运费异议（明确下一步）
+    # 7) Buyer Gamma —— 运费异议（明确下一步）
     t.append({
-        "task_id": se.make_task_id("13919358534", "待核查"),
-        "lead_id": "13919358534", "buyer": "Sultana ALDAWS", "owner": "Ella Chen",
+        "task_id": se.make_task_id("13900000103", "待核查"),
+        "lead_id": "13900000103", "buyer": "Buyer Gamma", "owner": "Ella Chen",
         "action_type": "待核查",
         "evidence": [
             ev("buyer", "09-11 16:28", "تكاليف الشحن مرتفعه جدًا جدًا", "（译文）运费非常非常高", False),
@@ -215,10 +215,10 @@ def build_tasks():
         "status": "open",
     })
 
-    # 8/9) NSABIMANA、Hashim —— 重复线索核实（不删除、不合并）
+    # 8/9) Buyer Zeta、Hashim —— 重复线索核实（不删除、不合并）
     for lid, buyer, owner, ref in [
-        ("13842024171", "NSABIMANA Christophe", "Alice Lam", "13831813262/13916574677"),
-        ("13897259009", "Hashim Abdullah", "Bin Cai", "13835503548"),
+        ("13900000106", "Buyer Zeta", "Alice Lam", "13900000107/13900000108"),
+        ("13900000109", "Buyer Eta", "Bin Cai", "13900000110"),
     ]:
         t.append({
             "task_id": se.make_task_id(lid, "重复线索核实"),
@@ -226,7 +226,7 @@ def build_tasks():
             "action_type": "重复线索核实",
             "evidence": [
                 ev("seller", "09-11 13:31", "You're welcome.", "（译文）不客气（礼貌收尾）", False),
-            ] if buyer.startswith("NSABIMANA") else [
+            ] if buyer.startswith("Buyer Zeta") else [
                 ev("buyer", "09-11 12:53", "Thanks", "（译文）谢谢", False),
             ],
             "trigger_reason": f"多条询盘 ID 疑似同一会话（{ref}）",
@@ -241,9 +241,9 @@ def build_tasks():
 
     # 闭环会话（本次无动作，但保留记录；礼貌收尾不等同订单闭环）
     for lid, buyer, owner in [
-        ("13831813262", "NSABIMANA Christophe", "Alice Lam"),
-        ("13916574677", "NSABIMANA Christophe", "Alice Lam"),
-        ("13835503548", "Hashim Abdullah", "Bin Cai"),
+        ("13900000107", "Buyer Zeta", "Alice Lam"),
+        ("13900000108", "Buyer Zeta", "Alice Lam"),
+        ("13900000110", "Buyer Eta", "Bin Cai"),
     ]:
         t.append({
             "task_id": se.make_task_id(lid, "本次会话已闭环"),

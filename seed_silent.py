@@ -13,31 +13,31 @@ import state_engine as se
 
 SILENT_LEADS = [
     # (inquiry_id, buyer, owner, country, category, create, update)
-    ("13659680985", "Fonda Arnaud Nanfack", "Alice Lam", "cm", "TM 商机", "2025-09-08", "2025-09-08"),
-    ("13660890080", "Marina BN", "Bin Cai", "bf", "TM 商机", "2025-09-08", "2025-09-08"),
-    ("13651851078", "Elijah Mukarram", "Alice Lam", "us", "TM 商机", "2025-09-07", "2025-09-07"),
-    ("13651635033", "Miguel Arnaldo Molina Riveros", "Alan Au", "pe", "TM 商机", "2025-09-07", "2025-09-07"),
-    ("13651745171", "fabiana donatti", "Alice Lam", "br", "TM 商机", "2025-09-07", "2025-09-07"),
-    ("13695072041", "BOATENG MICHAEL", "Alice Lam", "gh", "TM 商机", "2025-09-07", "2025-09-07"),
-    ("100000003402255", "Martin Ladic", "Alice Lam", "sk", "询盘商机", "2025-09-07", "2025-09-07"),
-    ("20454222234", "mhmd tlalwh", "Alice Lam", "gb", "询盘商机", "2025-09-07", "2025-09-07"),
-    ("20454222246", "mhmd tlalwh", "Alice Lam", "gb", "询盘商机", "2025-09-07", "2025-09-07"),
-    ("13662556648", "Desire Kibelushi", "Alice Lam", "zr", "TM 商机", "2025-09-06", "2025-09-07"),
-    ("13634273443", "Demetra Popa", "Alice Lam", "it", "TM 商机", "2025-08-12", "2025-09-07"),
-    ("13653715405", "UmmarFaruk Patel", "Alice Lam", "gb", "TM 商机", "2025-09-06", "2025-09-06"),
-    ("100000003731426", "Jerry Mike", "Alan Au", "de", "询盘商机", "2025-09-08", "2025-09-08"),
-    ("20449699936", "Kawira Njeru", "Alice Lam", "de", "询盘商机", "2025-09-08", "2025-09-08"),
-    ("100000003993817", "jolien van Reamdonk", "Alice Lam", "us", "询盘商机", "2025-09-08", "2025-09-08"),
-    ("13651899584", "April Garcia", "Alice Lam", "ph", "TM 商机", "2025-09-07", "2025-09-08"),
-    ("20449064533", "Ali Akbar", "Alice Lam", "ca", "询盘商机", "2025-09-08", "2025-09-08"),
-    ("20453465919", "Atika El inani", "Alice Lam", "us", "询盘商机", "2025-09-08", "2025-09-08"),
-    ("13649198233", "Maksud Ahmad", "Alice Lam", "de", "TM 商机", "2025-09-08", "2025-09-08"),
-    ("100000003470331", "Maksud Ahmad", "Alice Lam", "de", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001041", "Fonda Arnaud Nanfack", "Alice Lam", "cm", "TM 商机", "2025-09-08", "2025-09-08"),
+    ("139000001047", "Buyer Pi", "Bin Cai", "bf", "TM 商机", "2025-09-08", "2025-09-08"),
+    ("139000001051", "Buyer Chi", "Alice Lam", "us", "TM 商机", "2025-09-07", "2025-09-07"),
+    ("139000001045", "Miguel Arnaldo Molina Riveros", "Alan Au", "pe", "TM 商机", "2025-09-07", "2025-09-07"),
+    ("139000001046", "fabiana donatti", "Alice Lam", "br", "TM 商机", "2025-09-07", "2025-09-07"),
+    ("139000001049", "Buyer Rho", "Alice Lam", "gh", "TM 商机", "2025-09-07", "2025-09-07"),
+    ("139000001052", "Buyer Psi", "Alice Lam", "sk", "询盘商机", "2025-09-07", "2025-09-07"),
+    ("139000001048", "Buyer Sigma", "Alice Lam", "gb", "询盘商机", "2025-09-07", "2025-09-07"),
+    ("139000001060", "Buyer Sigma", "Alice Lam", "gb", "询盘商机", "2025-09-07", "2025-09-07"),
+    ("139000001042", "Desire Kibelushi", "Alice Lam", "zr", "TM 商机", "2025-09-06", "2025-09-07"),
+    ("139000001043", "Demetra Popa", "Alice Lam", "it", "TM 商机", "2025-08-12", "2025-09-07"),
+    ("139000001053", "Buyer Omega", "Alice Lam", "gb", "TM 商机", "2025-09-06", "2025-09-06"),
+    ("139000001054", "Buyer A2", "Alan Au", "de", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001058", "Kawira Njeru", "Alice Lam", "de", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001050", "Buyer Tau", "Alice Lam", "us", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001055", "Buyer B2", "Alice Lam", "ph", "TM 商机", "2025-09-07", "2025-09-08"),
+    ("139000001057", "Ali Akbar", "Alice Lam", "ca", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001059", "Atika El inani", "Alice Lam", "us", "询盘商机", "2025-09-08", "2025-09-08"),
+    ("139000001044", "Buyer C2", "Alice Lam", "de", "TM 商机", "2025-09-08", "2025-09-08"),
+    ("139000001056", "Buyer C2", "Alice Lam", "de", "询盘商机", "2025-09-08", "2025-09-08"),
 ]
 
 # 4 条详情判定：inquiry_id -> 逐条已知事实（不再统一成一句）
 DETAILS = {
-    "13653715405": {  # UmmarFaruk Patel
+    "139000001053": {  # Buyer Omega
         "classification": "待核实候选",
         "last_msg_speaker": "seller",
         "last_msg_time": "2025-09-06 15:54",
@@ -45,7 +45,7 @@ DETAILS = {
         "history_note": "产品已停产，需先核实是否有匹配替代款；无供应方案则缺乏唤醒理由",
         "wake_value_pending": "核实替代款供应",
     },
-    "13659680985": {  # Fonda Arnaud Nanfack
+    "139000001041": {  # Fonda Arnaud Nanfack
         "classification": "待核实候选",
         "last_msg_speaker": "seller",
         "last_msg_time": "2025-09-14 02:06",
@@ -53,7 +53,7 @@ DETAILS = {
         "history_note": "索要目录，收到资料后沉默；需核实实际采购需求、历史联系及新联系价值",
         "wake_value_pending": "核实采购需求与历史联系",
     },
-    "13660890080": {  # Marina BN —— 时间字段不一致，单独记录待回查
+    "139000001047": {  # Buyer Pi —— 时间字段不一致，单独记录待回查
         "classification": "待核实候选",
         "last_msg_speaker": "seller",
         "last_msg_time": "2026-04-26 03:34",
@@ -63,7 +63,7 @@ DETAILS = {
         "history_note": "买家索目录后消失，卖家多次模板跟进无果；需核实次数与有效新方案，不能因久未回复再追加模板",
         "wake_value_pending": "核实次数与有效新方案",
     },
-    "13651635033": {  # Miguel Arnaldo Molina Riveros
+    "139000001045": {  # Miguel Arnaldo Molina Riveros
         "classification": "未知C",
         "last_msg_speaker": "seller",
         "last_msg_time": "2025-09-07 09:04",

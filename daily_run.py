@@ -213,10 +213,10 @@ def _demo_inner(report_path):
                 "completion_criteria": "DDP 到门价答复发出",
                 "next_check_at": "2026-09-13", "status": "open",
             },
-            # 旧会话变化：Sultana 有新回复 -> 重开（new_signal=True）
+            # 旧会话变化：Buyer Gamma 有新回复 -> 重开（new_signal=True）
             {
-                "task_id": se.make_task_id("13919358534", "待核查"),
-                "lead_id": "13919358534", "buyer": "Sultana ALDAWS", "owner": "Ella Chen",
+                "task_id": se.make_task_id("13900000103", "待核查"),
+                "lead_id": "13900000103", "buyer": "Buyer Gamma", "owner": "Ella Chen",
                 "action_type": "待核查",
                 "evidence": [{"speaker": "buyer", "time": "09-12 10:20",
                               "text_original": "Ok send me the sea freight option",
@@ -231,7 +231,7 @@ def _demo_inner(report_path):
         ],
         "events": [
             # 约定暂停：模拟客户明确下月某日联系
-            {"lead_id": "13653715405", "type": "pause_until", "at": "2026-10-05"},
+            {"lead_id": "13900000119", "type": "pause_until", "at": "2026-10-05"},
         ],
         "wake_contacts": [],
     }

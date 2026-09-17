@@ -8,6 +8,23 @@ venv/
 # 状态引擎原子写的临时文件
 *.tmp
 
+# === 真实客户数据隔离（v1.3 阶段1.1 安全要求）===
+# 真实抓取产物含客户聊天/标识，禁止进入公开 Git
+captures/
+captures/v1.3/
+_alibaba_inquiry_*.json
+deal-assistant-*-report.html
+# 本地调试目录
+debug/
+# 调试/匿名化一次性脚本（本地工具，不入公开仓库）
+_scan_privacy.py
+_anonymize_md.py
+# 真实生产 state（真实买家姓名/lead_id/owner 对应，2026-09-17 起本地私有化；
+# 仓库内保留 state/assignee_roles.json（仅内部员工配置）作为配置模板）
+state/*.json
+state/backups/
+
+
 # 编辑器 / 系统
 .vscode/
 .idea/
