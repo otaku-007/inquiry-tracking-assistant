@@ -86,10 +86,22 @@ def _within_rolling(sent_at: Optional[str], today: date, window_days: int) -> bo
     return (today - d).days < window_days
 
 
-def record_wake_contact(w: Dict[str, Any], contact: Dict[str, Any]) -> Dict[str, Any]:
-    """记录一次实际主动唤醒，并推进周期计数/冷却。调用方需先用 state_engine.record_contact 去重。"""
+def record_wake_contact(w: Dict[str, Any], contact: Dict[str, Any],
+                        prior_count: Optional[int] = None) -> Dict[str, Any]:
+    """记录一次实际主动唤醒，并推进周期计数/冷却。调用方需先用 state_engine.record_contact 去重。
+
+    prior_count 是「本次之前」的周期唤醒次数，必须在把本次联系写入 contacts **之前**取得。
+
+    为什么必须显式传入：cycle_wake_count() 在缺少显式计数时会退化为按 contacts 派生，
+    而 state_engine.record_contact() 已经先把本次写入 contacts。若此处再直接
+    cycle_wake_count(w) + 1，取到的派生值已含本次，再加 1 就会把首次唤醒记成 2 次，
+    并使冷却期提前一次触发。
+
+    省略 prior_count 仅适用于「本次联系尚未写入 contacts」的纯函数式调用。
+    """
     cfg = WAKE_CONFIG
-    cwc = cycle_wake_count(w) + 1
+    base = cycle_wake_count(w) if prior_count is None else int(prior_count)
+    cwc = base + 1
     w["cycle_wake_count"] = cwc
     w["last_wake_at"] = str(contact.get("sent_at", ""))[:10]
     if cwc >= cfg["cycle_max"]:
@@ -204,6 +216,18 @@ def decide_wake(w: Dict[str, Any], as_of: str,
     return _decide(DECISION_CONTACT, f"满足条件，可联系（本周期第 {cwc + 1} 次）", None, w, client_level_verified)
 
 
+def buyer_key(opp: Dict[str, Any]) -> Optional[str]:
+    """客户聚合键：优先稳定 buyer_id，缺省回退 buyer 姓名（不可信，仅作退化）。
+
+    写入侧（aggregate_buyer_contacts）与查询侧（日报评估）必须共用本函数。
+    否则一旦线索带上 buyer_id，写入用 buyer_id、查询用姓名，键不一致会让客户级
+    聚合永远查不中，rolling_contacts 恒为 None，客户级限次形同虚设。
+    """
+    if not opp:
+        return None
+    return opp.get("buyer_id") or opp.get("buyer")
+
+
 def aggregate_buyer_contacts(wakes: Dict[str, Any],
                              opportunities: List[dict]) -> Dict[str, Dict[str, Any]]:
     """按稳定 buyer_id 聚合唤醒联系（缺 buyer_id 时按姓名，identity_verified=False）。
@@ -213,7 +237,9 @@ def aggregate_buyer_contacts(wakes: Dict[str, Any],
     from collections import defaultdict
     by_buyer: Dict[str, List[dict]] = defaultdict(list)
     for o in opportunities:
-        bid = o.get("buyer_id") or o.get("buyer")
+        bid = buyer_key(o)
+        if not bid:  # 无 buyer_id 也无姓名，无法归类，跳过避免污染聚合
+            continue
         verified = bool(o.get("buyer_id"))
         w = wakes.get(o.get("lead_id")) or {}
         by_buyer[bid].append({

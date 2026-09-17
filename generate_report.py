@@ -114,9 +114,13 @@ def _evaluate_wakes(state, as_of):
     buyer_agg = wr.aggregate_buyer_contacts(wakes, opps)
     contactable, verify = [], []
     for opp_key, w in wakes.items():
-        # 客户级聚合：仅 buyer_id 可核实时传入（当前数据无 buyer_id，按姓名聚合不可信）
-        buyer = next((o.get("buyer") for o in opps if o.get("lead_id") == opp_key), None)
-        agg = buyer_agg.get(buyer) if buyer else None
+        opp = next((o for o in opps if o.get("lead_id") == opp_key), None)
+        buyer = (opp or {}).get("buyer")
+        # 客户级聚合：查询键必须与 aggregate_buyer_contacts 的写入键一致（buyer_id 优先）。
+        # 若这里用姓名去查，一旦线索带上 buyer_id 就永远查不中，rolling_contacts 恒为
+        # None，客户级 90 天滚动限次不会生效。
+        key = wr.buyer_key(opp)
+        agg = buyer_agg.get(key) if key else None
         rolling = agg["contacts"] if agg and agg.get("identity_verified") else None
         d = wr.decide_wake(w, as_of, rolling_contacts=rolling, has_value=_wake_has_value(w))
         entry = {"lead_id": opp_key, "buyer": buyer, **d, "note": w.get("history_note"),

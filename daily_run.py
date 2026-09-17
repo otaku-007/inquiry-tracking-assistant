@@ -59,9 +59,12 @@ def _record_wake_contacts(wakes, wake_contacts):
         if not lid:
             continue
         w = wakes.setdefault(lid, {"contacts": [], "plan": None})
+        # prior 必须在写入 contacts 之前取。cycle_wake_count() 在缺显式计数时会按
+        # contacts 派生，若追加后再取，得到的已含本次，再加 1 会多算一次。
+        prior = wr.cycle_wake_count(w)
         _, added = se.record_contact(wakes, lid, contact)
         if added and contact.get("kind") == "wake":
-            wr.record_wake_contact(w, contact)
+            wr.record_wake_contact(w, contact, prior_count=prior)
     return wakes
 
 

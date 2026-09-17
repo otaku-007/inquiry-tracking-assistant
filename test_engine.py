@@ -8,6 +8,15 @@
 - 状态文件损坏不被空默认值覆盖
 - 统一唤醒资格判断（三次上限/工作日间隔/冷却期/滚动次数/未知历史/暂停条件/停止联系）
 - 约定暂停：从模拟原始聊天到暂停决策的完整闭环
+
+v1.2.1 新增「集成链路」测试（13-17，见文件末段）：
+此前测试只直接调 decide_wake()，未覆盖「实际写入一次联系」的端到端链路，
+因而漏掉了两个隐藏问题：
+- 唤醒次数重复计数：record_contact() 先追加，record_wake_contact() 再
+  cycle_wake_count()+1，而派生计数已含本次 -> 首次唤醒被记成 2 次，冷却提前一次触发。
+- buyer_id 聚合键错配：聚合以 buyer_id 写入，日报却用 buyer 姓名查询，
+  一旦有 buyer_id 客户级限次就永远查不中。
+集成测试在临时 STATE_DIR 上跑真实 daily_run.run_daily，直接验证落盘结果。
 """
 
 import os
@@ -17,6 +26,8 @@ from datetime import date, timedelta
 
 import state_engine as se
 import wake_rules as wr
+import generate_report as gr
+import daily_run as dr
 from seed_state import build_tasks, build_opportunities
 
 PASS = []
@@ -252,6 +263,192 @@ def test_simulated_pause_flow():
     check("12c 后续回复后重新可联系", d_reply["decision"] == "可联系", str(d_reply))
 
 
+# ---------------------------------------------------------------- v1.2.1 集成链路
+# 以下测试跑真实的 daily_run.run_daily（在临时 STATE_DIR 上落盘），
+# 覆盖「实际写入一次联系」的完整链路，而不是只调 decide_wake()。
+
+def _temp_state():
+    """把 STATE_DIR 指向临时目录，返回 (原目录, 临时目录)。调用方负责还原。"""
+    old = se.STATE_DIR
+    d = tempfile.mkdtemp(prefix="v121_")
+    se.STATE_DIR = d
+    return old, d
+
+
+def _mk_lead(lid, buyer=None, buyer_id=None, owner="Ella Chen"):
+    o = {
+        "lead_id": lid, "buyer": buyer or f"Buyer {lid}", "owner": owner,
+        "category": "TM 商机", "source": "Inquiry from TM", "country": "DE",
+        "create_time": "2026-09-01", "update_time": "2026-09-01",
+        "high_intent": False, "conversation_key": f"conv-{lid}", "dedup_note": None,
+    }
+    if buyer_id:
+        o["buyer_id"] = buyer_id
+    return o
+
+
+def _mk_wake(lid, sent_at, h):
+    return {"lead_id": lid,
+            "contact": {"sent_at": sent_at, "channel": "TM", "kind": "wake", "content_hash": h}}
+
+
+def _run_batch(batch):
+    """只更新状态，不写日报文件。"""
+    return dr.run_daily(batch, write=False)
+
+
+def _loaded_wakes():
+    return se.load_state()[0]["wakes"]
+
+
+def test_integration_wake_count_once():
+    """13. 集成：首次真实唤醒只能算 1 次，且冷却必须等到第 3 次才触发。
+
+    旧实现下 record_contact 先写入 contacts，record_wake_contact 再
+    cycle_wake_count()+1 会把首次记成 2、第 2 次就触发冷却。
+    """
+    old, d = _temp_state()
+    try:
+        _run_batch({"as_of": "2026-09-12", "leads": [_mk_lead("L1")],
+                    "wake_contacts": [_mk_wake("L1", "2026-09-12T10:00:00", "h1")]})
+        w = _loaded_wakes()["L1"]
+        n = len([c for c in w["contacts"] if c.get("kind") == "wake"])
+        check("13a 联系只写入 1 条", n == 1, f"n={n}")
+        check("13b 首次唤醒周期计数=1", w.get("cycle_wake_count") == 1,
+              f"cycle_wake_count={w.get('cycle_wake_count')}（旧实现为 2）")
+        check("13c 首次唤醒不触发冷却", not w.get("cooldown_until"), str(w.get("cooldown_until")))
+
+        _run_batch({"as_of": "2026-09-22", "leads": [],
+                    "wake_contacts": [_mk_wake("L1", "2026-09-22T10:00:00", "h2")]})
+        w = _loaded_wakes()["L1"]
+        check("13d 第2次后计数=2", w.get("cycle_wake_count") == 2, str(w.get("cycle_wake_count")))
+        check("13e 第2次后仍不冷却", not w.get("cooldown_until"),
+              f"cooldown_until={w.get('cooldown_until')}（旧实现会提前冷却）")
+
+        _run_batch({"as_of": "2026-10-06", "leads": [],
+                    "wake_contacts": [_mk_wake("L1", "2026-10-06T10:00:00", "h3")]})
+        w = _loaded_wakes()["L1"]
+        check("13f 第3次后计数=3", w.get("cycle_wake_count") == 3, str(w.get("cycle_wake_count")))
+        check("13g 第3次后冷却=第3次+30天", w.get("cooldown_until") == "2026-11-05",
+              str(w.get("cooldown_until")))
+    finally:
+        se.STATE_DIR = old
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def test_integration_wake_rerun_idempotent():
+    """14. 集成：同一批次重复运行，联系去重后周期计数不得增长。"""
+    old, d = _temp_state()
+    try:
+        batch = {"as_of": "2026-09-12", "leads": [_mk_lead("L1")],
+                 "wake_contacts": [_mk_wake("L1", "2026-09-12T10:00:00", "h1")]}
+        _run_batch(batch)
+        first = _loaded_wakes()["L1"].get("cycle_wake_count")
+        _run_batch(batch)
+        w = _loaded_wakes()["L1"]
+        check("14a 重跑不新增联系", len(w["contacts"]) == 1, f"n={len(w['contacts'])}")
+        check("14b 重跑不增长周期计数", first == w.get("cycle_wake_count") == 1,
+              f"first={first} second={w.get('cycle_wake_count')}")
+    finally:
+        se.STATE_DIR = old
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def test_integration_reply_resets_cycle():
+    """15. 集成：实质回复重置周期后，再唤醒必须从 1 重新开始（不能继承旧计数）。"""
+    old, d = _temp_state()
+    try:
+        _run_batch({"as_of": "2026-09-12", "leads": [_mk_lead("L1")],
+                    "wake_contacts": [_mk_wake("L1", "2026-09-12T10:00:00", "h1")]})
+        check("15a 首轮计数=1", _loaded_wakes()["L1"].get("cycle_wake_count") == 1,
+              str(_loaded_wakes()["L1"].get("cycle_wake_count")))
+
+        _run_batch({"as_of": "2026-09-15", "leads": [],
+                    "events": [{"lead_id": "L1", "type": "buyer_reply",
+                                "at": "2026-09-15T09:00:00"}]})
+        w = _loaded_wakes()["L1"]
+        check("15b 实质回复后周期归零", w.get("cycle_wake_count") == 0,
+              str(w.get("cycle_wake_count")))
+        check("15c 历史联系仍保留（不因限次丢弃）",
+              len([c for c in w["contacts"] if c.get("kind") == "wake"]) == 1,
+              str(len(w["contacts"])))
+
+        _run_batch({"as_of": "2026-09-20", "leads": [],
+                    "wake_contacts": [_mk_wake("L1", "2026-09-20T10:00:00", "h2")]})
+        check("15d 重置后再唤醒从1开始", _loaded_wakes()["L1"].get("cycle_wake_count") == 1,
+              str(_loaded_wakes()["L1"].get("cycle_wake_count")))
+    finally:
+        se.STATE_DIR = old
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def _seed_buyer_state(buyer_id):
+    """两条线索同一买家，各 1 次本周期唤醒但联系人头共 6 条（达 90 天滚动上限）。"""
+    opps = [_mk_lead("L1", "Same Buyer", buyer_id), _mk_lead("L2", "Same Buyer", buyer_id)]
+    contacts = [{"kind": "wake", "sent_at": f"2026-09-0{i}", "channel": "TM"} for i in (1, 2, 3)]
+    se.save_section("opportunities", opps)
+    se.save_section("wakes", {
+        "L1": {"contacts": [dict(c) for c in contacts],
+               "cycle_wake_count": 1, "classification": "待核实候选"},
+        "L2": {"contacts": [dict(c) for c in contacts],
+               "cycle_wake_count": 1, "classification": "待核实候选"},
+    })
+    return se.load_state()[0]
+
+
+def test_integration_buyer_id_aggregation_used():
+    """16. 集成：有稳定 buyer_id 时，日报必须走客户级聚合。
+
+    旧实现用姓名查聚合（键是 buyer_id），rolling_contacts 恒为 None，
+    于是把已达 6 次上限的客户误判为「可联系」。
+    """
+    old, d = _temp_state()
+    try:
+        state = _seed_buyer_state("BID-1")
+        agg = wr.aggregate_buyer_contacts(state["wakes"], state["opportunities"])
+        check("16a 聚合键为 buyer_id 且可核验",
+              list(agg.keys()) == ["BID-1"] and agg["BID-1"]["identity_verified"],
+              str({k: v["identity_verified"] for k, v in agg.items()}))
+        check("16b 聚合联系人头=6", len(agg["BID-1"]["contacts"]) == 6,
+              str(len(agg["BID-1"]["contacts"])))
+
+        contactable, verify = gr._evaluate_wakes(state, "2026-09-12")
+        entries = contactable + verify
+        check("16c 客户级聚合已真正参与判定",
+              entries and all(e["client_level_verified"] for e in entries),
+              str([(e["lead_id"], e["client_level_verified"]) for e in entries]))
+        check("16d 达 90 天滚动上限不再判可联系",
+              not contactable and len(verify) == 2,
+              f"contactable={len(contactable)} verify={len(verify)}（旧实现误判为可联系）")
+        check("16e 原因为 90 天滚动上限",
+              all("90 天滚动" in e["reason"] for e in verify),
+              str([e["reason"] for e in verify]))
+    finally:
+        se.STATE_DIR = old
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def test_integration_no_buyer_id_falls_back():
+    """17. 集成：无 buyer_id 时回退姓名聚合，且不得宣称客户级限次已实现。"""
+    old, d = _temp_state()
+    try:
+        state = _seed_buyer_state(None)
+        agg = wr.aggregate_buyer_contacts(state["wakes"], state["opportunities"])
+        check("17a 姓名聚合被标记为不可信",
+              agg["Same Buyer"]["identity_verified"] is False, str(agg))
+
+        contactable, verify = gr._evaluate_wakes(state, "2026-09-12")
+        entries = contactable + verify
+        check("17b 未宣称客户级已验证",
+              all(e["client_level_verified"] is False for e in entries),
+              str([(e["lead_id"], e["client_level_verified"]) for e in entries]))
+        check("17c 无 buyer_id 时不误判超限", len(contactable) == 2,
+              f"contactable={len(contactable)} verify={len(verify)}")
+    finally:
+        se.STATE_DIR = old
+        shutil.rmtree(d, ignore_errors=True)
+
+
 # ---------------------------------------------------------------- 运行
 
 def run():
@@ -267,6 +464,12 @@ def run():
     test_corrupt_state_protection()
     test_wake_rules()
     test_simulated_pause_flow()
+    # v1.2.1 集成链路
+    test_integration_wake_count_once()
+    test_integration_wake_rerun_idempotent()
+    test_integration_reply_resets_cycle()
+    test_integration_buyer_id_aggregation_used()
+    test_integration_no_buyer_id_falls_back()
 
     print(f"PASS: {len(PASS)}")
     for p in PASS:
