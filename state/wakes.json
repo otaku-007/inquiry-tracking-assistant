@@ -1,0 +1,48 @@
+{
+  "13653715405": {
+    "contacts": [],
+    "plan": null,
+    "history_unknown": true,
+    "history_note": "产品已停产，需先核实是否有匹配替代款；无供应方案则缺乏唤醒理由",
+    "classification": "待核实候选",
+    "last_msg_speaker": "seller",
+    "last_msg_time": "2025-09-06 15:54",
+    "note": "卖家回'已停产'，买家有未满足需求(black&gold/1500冷白)后消失",
+    "wake_value_pending": "核实替代款供应"
+  },
+  "13659680985": {
+    "contacts": [],
+    "plan": null,
+    "history_unknown": true,
+    "history_note": "索要目录，收到资料后沉默；需核实实际采购需求、历史联系及新联系价值",
+    "classification": "待核实候选",
+    "last_msg_speaker": "seller",
+    "last_msg_time": "2025-09-14 02:06",
+    "note": "买家索目录，卖家发报价PDF+模板跟进后买家再无回复",
+    "wake_value_pending": "核实采购需求与历史联系"
+  },
+  "13660890080": {
+    "contacts": [],
+    "plan": null,
+    "history_unknown": true,
+    "history_note": "买家索目录后消失，卖家多次模板跟进无果；需核实次数与有效新方案，不能因久未回复再追加模板",
+    "classification": "待核实候选",
+    "last_msg_speaker": "seller",
+    "last_msg_time": "2026-04-26 03:34",
+    "note": "买家索目录后消失，卖家多次模板跟进无果",
+    "wake_value_pending": "核实次数与有效新方案",
+    "list_update_time": "2025-09-08",
+    "time_discrepancy_note": "列表 update_time(2025-09-08) 与详情最后消息时间(2026-04-26)不一致：字段语义待回查，不能据此判定一年未聊天"
+  },
+  "13651635033": {
+    "contacts": [],
+    "plan": null,
+    "history_unknown": true,
+    "history_note": "会话仅 3 条（Hi+转交通知），无买家有效发言，无法判定需求",
+    "classification": "未知C",
+    "last_msg_speaker": "seller",
+    "last_msg_time": "2025-09-07 09:04",
+    "note": "会话仅3条(Hi+转交通知)，无买家有效发言，无法判定需求",
+    "no_valid_demand": true
+  }
+}

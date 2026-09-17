@@ -1,0 +1,7 @@
+{
+  "sales": ["Ella Chen", "Alice Lam", "Bin Cai", "Alan Au"],
+  "operations": ["Ting Zen", "yanjun Lin"],
+  "updated_at": "2026-09-12",
+  "source": "用户确认（Ella/Alice/Bin/Alan 为销售，Ting Zen/yanjun Lin 为运营）",
+  "note": "日报只纳入 sales；operations 账号如出现在负责人列，过滤不进入销售分组。"
+}
